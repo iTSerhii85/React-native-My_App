@@ -12,6 +12,10 @@ import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 
+import app from "../../firebase/config";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+const storage = getStorage(app);
+
 const CreateScreen = ({ navigation }) => {
   const [snap, setSnap] = useState(null);
   const [photo, setPhoto] = useState(null);
@@ -25,7 +29,28 @@ const CreateScreen = ({ navigation }) => {
   }
 
   const sendPhoto = () => {
+    uploadPhotoToServer();
     navigation.navigate("DefaultScreen", { photo });
+  };
+
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob();
+    const uniquePostId = Date.now().toString();
+
+    const storageRef = ref(storage, `postImages/${uniquePostId}.jpg`);
+
+    // 'file' comes from the Blob or File API
+    await uploadBytes(storageRef, file).then((snapshot) => {
+      console.log("Uploaded a blob or file!");
+    });
+
+    await getDownloadURL(ref(storage, `postImages/${uniquePostId}.jpg`)).then(
+      (url) => {
+        const processedPhoto = url;
+        console.log(processedPhoto);
+      }
+    );
   };
 
   const takePhoto = async () => {

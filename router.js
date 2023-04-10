@@ -11,10 +11,14 @@ import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { authSignOutUser } from "./redux/auth/authOperations";
 
+import { useDispatch } from "react-redux";
+
 const MainStack = createStackNavigator();
 const MainTab = createBottomTabNavigator();
 
 export const useRoute = (isAuth) => {
+  const dispatch = useDispatch();
+
   if (!isAuth) {
     return (
       <MainStack.Navigator>
@@ -41,7 +45,7 @@ export const useRoute = (isAuth) => {
           title: "Публикации",
           headerRight: () => (
             <Entypo
-              onPress={() => authSignOutUser}
+              onPress={() => dispatch(authSignOutUser())}
               name="log-out"
               size={24}
               color="gray"
