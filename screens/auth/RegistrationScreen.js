@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     fontWeight: 500,
   },
   input: {
-    padding: 16,
+    padding: 10,
     borderWidth: 2,
     borderColor: "#0217d1",
     height: 50,
@@ -190,6 +190,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   btn: {
+    marginHorizontal: 40,
     backgroundColor: "#FF6C00",
     height: 50,
     borderRadius: 25,

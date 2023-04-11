@@ -7,14 +7,13 @@ import { authStateChangeUser } from "../auth/authOperations";
 
 const Main = () => {
   const dispatch = useDispatch();
-
   const { stateChange } = useSelector((state) => state.auth);
-
-  const routing = useRoute(stateChange);
 
   useEffect(() => {
     dispatch(authStateChangeUser());
-  }, []);
+  }, [stateChange]);
+
+  const routing = useRoute(stateChange);
 
   return <NavigationContainer>{routing}</NavigationContainer>;
 };
