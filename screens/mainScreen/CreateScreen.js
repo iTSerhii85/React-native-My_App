@@ -41,7 +41,7 @@ const CreateScreen = ({ navigation }) => {
   const { userId, nickname } = useSelector((state) => state.auth);
 
   const navigate = async () => {
-    navigation.navigate("DefaultScreen", { photo });
+    navigation.navigate("DefaultScreen");
     setPhoto(null);
     setNewPhoto(false);
     console.log("comment", comment);
@@ -80,9 +80,7 @@ const CreateScreen = ({ navigation }) => {
       console.log("Uploaded a blob or file!");
     });
 
-    const processedPhoto = await getDownloadURL(
-      ref(storage, `postImages/${uniquePostId}.jpg`)
-    )
+    await getDownloadURL(ref(storage, `postImages/${uniquePostId}.jpg`))
       .then((url) => {
         uploadPostToServer(url);
       })

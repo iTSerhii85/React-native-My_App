@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -9,14 +9,35 @@ import {
   Button,
 } from "react-native";
 
+import { useFocusEffect } from "@react-navigation/native";
+
+import {
+  collection,
+  getDocs,
+  getFirestore,
+  onSnapshot,
+} from "firebase/firestore";
+import app from "../../firebase/config";
+const db = getFirestore(app);
+
 const DefaultScreenPosts = ({ route, navigation }) => {
   const [posts, setPosts] = useState([]);
 
-  useEffect(() => {
-    if (route.params) {
-      setPosts((prevState) => [...prevState, route.params]);
-    }
-  }, [route.params]);
+  const getAllPost = async () => {
+    const querySnapshot = await getDocs(collection(db, "posts"));
+    const newPosts = [];
+    querySnapshot.forEach((doc) => {
+      newPosts.push({ ...doc.data(), id: doc.id });
+    });
+    setPosts(newPosts);
+  };
+  console.log(posts);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getAllPost();
+    }, [route])
+  );
 
   return (
     <View style={styles.container}>
