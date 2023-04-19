@@ -1,50 +1,41 @@
-import {
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  Image,
-  Button,
-  TextInput,
-} from "react-native";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { Camera, CameraType } from "expo-camera";
-import * as Location from "expo-location";
-import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { Entypo } from "@expo/vector-icons";
+import * as Location from "expo-location";
 import { useSelector } from "react-redux";
+import { useState } from "react";
+import {
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+  Button,
+  Image,
+  View,
+  Text,
+} from "react-native";
 
 import app from "../../firebase/config";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  doc,
-  setDoc,
-} from "firebase/firestore";
-
 const storage = getStorage(app);
 const db = getFirestore(app);
 
 const CreateScreen = ({ navigation }) => {
-  const [newPhoto, setNewPhoto] = useState(false);
   const [snap, setSnap] = useState(null);
   const [photo, setPhoto] = useState(null);
   const [comment, setComment] = useState("");
   const [location, setLocation] = useState(null);
-
+  const [newPhoto, setNewPhoto] = useState(false);
   const [type, setType] = useState(CameraType.back);
+  const { userId, nickname } = useSelector((state) => state.auth);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [status, requestPermissionStatus] = Location.useForegroundPermissions();
-
-  const { userId, nickname } = useSelector((state) => state.auth);
 
   const navigate = async () => {
     navigation.navigate("DefaultScreen");
     setPhoto(null);
     setNewPhoto(false);
-    console.log("comment", comment);
+    // console.log("comment", comment);
   };
 
   const uploadPostToServer = async (photoURL) => {
@@ -56,17 +47,10 @@ const CreateScreen = ({ navigation }) => {
         comment,
         location: location.coords,
       });
-      console.log("Document written with ID: ", docRef.id);
+      // console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
-    // await setDoc(doc(db, "post"), {
-    //   userId,
-    //   nickname,
-    //   photo: photoURL,
-    //   comment,
-    //   location: location.coords,
-    // });
   };
 
   const sendPhoto = async () => {
@@ -92,7 +76,7 @@ const CreateScreen = ({ navigation }) => {
     setPhoto(picture.uri);
     const location = await Location.getCurrentPositionAsync();
     setLocation(location);
-    console.log("location", location);
+    // console.log("location", location);
   };
 
   function toggleCameraType() {

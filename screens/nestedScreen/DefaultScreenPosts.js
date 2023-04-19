@@ -1,22 +1,8 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  Button,
-} from "react-native";
-
 import { useFocusEffect } from "@react-navigation/native";
+import React, { useState } from "react";
+import { collection, getDocs, getFirestore } from "firebase/firestore";
+import { View, StyleSheet, FlatList, Image, Button, Text } from "react-native";
 
-import {
-  collection,
-  getDocs,
-  getFirestore,
-  onSnapshot,
-} from "firebase/firestore";
 import app from "../../firebase/config";
 const db = getFirestore(app);
 
@@ -31,7 +17,7 @@ const DefaultScreenPosts = ({ route, navigation }) => {
     });
     setPosts(newPosts);
   };
-  console.log(posts);
+  // console.log(posts);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -52,13 +38,23 @@ const DefaultScreenPosts = ({ route, navigation }) => {
             }}
           >
             <Image source={{ uri: item.photo }} style={{ height: 200 }} />
+            <View>
+              <Text>{item.comment}</Text>
+            </View>
             <Button
               title="Go to map"
-              onPress={() => navigation.navigate("Map")}
+              onPress={() =>
+                navigation.navigate("Map", { location: item.location })
+              }
             />
             <Button
               title="Go to comments"
-              onPress={() => navigation.navigate("Comments")}
+              onPress={() =>
+                navigation.navigate("Comments", {
+                  postId: item.id,
+                  uri: item.photo,
+                })
+              }
             />
           </View>
         )}

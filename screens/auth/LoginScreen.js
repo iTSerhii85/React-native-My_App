@@ -40,9 +40,9 @@ const LoginScreen = ({ navigation }) => {
 
   const handleSubmit = () => {
     setIsShowKeyboard(false);
-    Keyboard.dismiss();
     dispatch(authSignInUser(inputValue));
     setInputValue(initialState);
+    Keyboard.dismiss();
   };
 
   const backdropKeyboardHide = () => {
@@ -94,8 +94,8 @@ const LoginScreen = ({ navigation }) => {
                   keyboardType="visible-password"
                   paddingLeft={10}
                   placeholder="Пароль"
-                  onFocus={() => setIsShowKeyboard(true)}
                   value={inputValue.password}
+                  onFocus={() => setIsShowKeyboard(true)}
                   onChangeText={(value) =>
                     setInputValue((prevState) => ({
                       ...prevState,
