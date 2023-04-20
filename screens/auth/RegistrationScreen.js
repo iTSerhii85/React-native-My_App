@@ -12,32 +12,62 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
-  Dimensions,
+  Image,
 } from "react-native";
+
+import { AntDesign } from "@expo/vector-icons";
+import { PermissionsAndroid, Platform } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 
 const initialState = {
   email: "",
   password: "",
   nickname: "",
+
+  photo: "",
 };
 
 const RegistrationScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [inputValue, setInputValue] = useState(initialState);
-  const [dimensions, setDimensions] = useState(Dimensions.get("window").width);
+  const [permission, requestPermission] =
+    ImagePicker.useMediaLibraryPermissions();
+  const [image, setImage] = useState(null);
 
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   const onChange = () => {
-  //     const width = Dimensions.get("window").width;
-  //     setDimensions(width);
-  //   };
-  //   Dimensions.addEventListener("change", onChange);
-  //   return () => {
-  //     Dimensions.removeEventListener("change", onChange);
-  //   };
-  // }, []);
+  const requestStoragePermission = async () => {
+    if (Platform.OS === "android") {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: "Storage Permission",
+            message: "App needs access to your storage",
+          }
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          requestPermission();
+          // console.log("Storage permission granted");
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+  };
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 4],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
 
   const handleSubmit = () => {
     setIsShowKeyboard(false);
@@ -51,6 +81,20 @@ const RegistrationScreen = ({ navigation }) => {
     Keyboard.dismiss();
   };
 
+  const addPhoto = async () => {
+    if (!permission.granted) {
+      requestStoragePermission();
+    } else {
+      pickImage();
+      if (image) {
+        setInputValue((prevState) => ({
+          ...prevState,
+          photo: image,
+        }));
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
       <TouchableWithoutFeedback onPress={backdropKeyboardHide}>
@@ -58,6 +102,37 @@ const RegistrationScreen = ({ navigation }) => {
           source={require("../../assets/image/bg.jpg")}
           style={styles.image}
         >
+          <View style={styles.photoWrapper}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={addPhoto}
+              style={styles.photoBtn}
+            >
+              {image ? (
+                <ImageBackground
+                  source={{ uri: image }}
+                  style={{ height: 150, width: 150, resizeMode: "cover" }}
+                />
+              ) : (
+                <View
+                  style={{
+                    padding: 16,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <AntDesign name="pluscircleo" size={100} color="#D9EBE9" />
+                  <Text
+                    style={{
+                      color: "#D9EBE9",
+                    }}
+                  >
+                    Аватар
+                  </Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
           <KeyboardAvoidingView>
             <View
               style={{
@@ -127,7 +202,6 @@ const RegistrationScreen = ({ navigation }) => {
                 onPress={handleSubmit}
                 style={{
                   ...styles.btn,
-                  // marginHorizontal: dimensions > 500 ? 40 : 0,
                 }}
               >
                 <Text style={styles.titleBtn}>Зарегистрироваться</Text>
@@ -137,7 +211,6 @@ const RegistrationScreen = ({ navigation }) => {
                 onPress={() => navigation.navigate("Login")}
                 style={{
                   ...styles.logBtn,
-                  // marginHorizontal: dimensions > 500 ? 40 : 0,
                 }}
               >
                 <Text style={styles.logBtnTitle}>Уже есть аккаунт? Войти</Text>
@@ -159,7 +232,6 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
     justifyContent: "flex-end",
-    // alignItems: "center",
   },
   form: {
     backgroundColor: "#ffffff",
@@ -212,6 +284,26 @@ const styles = StyleSheet.create({
   logBtnTitle: {
     fontSize: 18,
     color: "blue",
+  },
+  photoWrapper: {
+    borderWidth: 1,
+    position: "relative",
+    borderRadius: 10,
+    backgroundColor: "#ffffff",
+    width: 150,
+    height: 150,
+    marginLeft: "auto",
+    marginRight: "auto",
+    marginBottom: -75,
+    zIndex: 100,
+    overflow: "hidden",
+  },
+  photoBtn: {
+    width: "100%",
+    height: "100%",
+    // position: "absolute",
+    // bottom: 0,
+    // right: 0,
   },
 });
 

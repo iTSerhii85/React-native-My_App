@@ -61,7 +61,7 @@ const CreateScreen = ({ navigation }) => {
     const storageRef = ref(storage, `postImages/${uniquePostId}.jpg`);
 
     await uploadBytes(storageRef, file).then((snapshot) => {
-      console.log("Uploaded a blob or file!");
+      // console.log("Uploaded a blob or file!");
     });
 
     await getDownloadURL(ref(storage, `postImages/${uniquePostId}.jpg`))

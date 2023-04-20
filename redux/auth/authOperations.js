@@ -12,7 +12,7 @@ import app from "../../firebase/config";
 const auth = getAuth(app);
 
 const authSignUpUser =
-  ({ email, password, nickname }) =>
+  ({ email, password, nickname, photo }) =>
   async (dispatch, getState) => {
     try {
       await createUserWithEmailAndPassword(auth, email, password).then(
@@ -24,10 +24,14 @@ const authSignUpUser =
 
       await updateProfile(auth.currentUser, {
         displayName: nickname,
+        photoURL: photo,
       }).then(() => {
         const user = auth.currentUser;
         dispatch(
-          authSlice.actions.updateUserProfile({ nickname: user.displayName })
+          authSlice.actions.updateUserProfile({
+            nickname: user.displayName,
+            userPhoto: user.photoURL,
+          })
         );
       });
     } catch (error) {
