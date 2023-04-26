@@ -1,5 +1,6 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { useSelector } from "react-redux";
+import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
   TouchableOpacity,
@@ -20,26 +21,27 @@ const db = getFirestore(app);
 const CommentsScreen = ({ route }) => {
   const [comment, setComment] = useState("");
   const [allComments, setAllComments] = useState([]);
-  const { nickname } = useSelector((state) => state.auth);
+  const { nickname, photoURL } = useSelector((state) => state.auth);
 
   const postId = route.params.postId;
   const uri = route.params.uri;
 
-  useEffect(() => {
-    getAllPosts();
-  }, []);
+  // useEffect(() => {
+  //   getAllPosts();
+  // }, []);
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     getAllPosts();
-  //   }, [route])
-  // );
+  useFocusEffect(
+    React.useCallback(() => {
+      getAllPosts();
+    }, [route])
+  );
 
   const createPost = async () => {
     try {
       const docRef = await addDoc(collection(db, "posts", postId, "comments"), {
         comment,
         nickname,
+        photoURL,
       }).then(getAllPosts());
       // console.log("Document written with ID: ", docRef.id);
     } catch (e) {
@@ -70,11 +72,14 @@ const CommentsScreen = ({ route }) => {
         <FlatList
           data={allComments}
           renderItem={({ item }) => (
-            <View style={styles.commentContainer}>
-              <Text>
-                @{item.nickname}: {item.comment}
-              </Text>
-              {/* <Text>{item.comment}</Text> */}
+            <View style={{ flexDirection: "row", gap: 5, marginBottom: 10 }}>
+              <Image
+                source={{ uri: item.photoURL }}
+                style={{ height: 24, width: 24, borderRadius: 12 }}
+              />
+              <View style={styles.commentContainer}>
+                <Text>{item.comment}</Text>
+              </View>
             </View>
           )}
           keyExtractor={(item) => item.id}
@@ -87,10 +92,11 @@ const CommentsScreen = ({ route }) => {
           placeholder="Комментарий"
           value={comment}
         />
+        <TouchableOpacity style={styles.download} onPress={createPost}>
+          <Ionicons name="arrow-up" size={18} color="#ffffff" />
+          {/* <Text style={styles.titleBtn}>+</Text> */}
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.download} onPress={createPost}>
-        <Text style={styles.titleBtn}>Опубликовать</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -104,10 +110,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   commentContainer: {
-    borderWidth: 1,
-    borderColor: "#FF6C00",
     marginRight: 30,
-    // marginHorizontal: 20,
     padding: 10,
     borderRadius: 10,
     backgroundColor: "#D9EBE9",
@@ -115,22 +118,28 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginTop: 10,
     marginHorizontal: 10,
+    position: "relative",
+    marginBottom: 20,
   },
   input: {
-    height: 30,
-    borderColor: "transparent",
-    borderBottomColor: "#FF6C00",
+    height: 50,
+    width: "100%",
+    borderColor: "#E8E8E8",
+    backgroundColor: "#F6F6F6",
+    borderRadius: 100,
     borderWidth: 1,
+    paddingLeft: 10,
   },
   download: {
-    marginHorizontal: 40,
+    position: "absolute",
+    right: 8,
+    bottom: 8,
     backgroundColor: "#FF6C00",
-    height: 50,
-    borderRadius: 25,
-    marginTop: 30,
+    height: 34,
+    width: 34,
+    borderRadius: 17,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 30,
   },
   titleBtn: {
     color: "#ffffff",

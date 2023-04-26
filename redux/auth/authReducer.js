@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const state = {
   userId: null,
   nickname: null,
-  userPhoto: null,
+  photoURL: null,
   stateChange: false,
 };
 
@@ -15,7 +15,7 @@ export const authSlice = createSlice({
       ...state,
       userId: payload.userId,
       nickname: payload.nickname,
-      userPhoto: payload.userPhoto,
+      photoURL: payload.photoURL,
     }),
     authStateChange: (state, { payload }) => ({
       ...state,

@@ -2,12 +2,15 @@ import { useFocusEffect } from "@react-navigation/native";
 import React, { useState } from "react";
 import { collection, getDocs, getFirestore } from "firebase/firestore";
 import { View, StyleSheet, FlatList, Image, Button, Text } from "react-native";
+import { useSelector } from "react-redux";
+import { Posts } from "../../redux/components/post";
 
 import app from "../../firebase/config";
 const db = getFirestore(app);
 
 const DefaultScreenPosts = ({ route, navigation }) => {
   const [posts, setPosts] = useState([]);
+  const { photoURL, nickname } = useSelector((state) => state.auth);
 
   const getAllPost = async () => {
     const querySnapshot = await getDocs(collection(db, "posts"));
@@ -17,7 +20,6 @@ const DefaultScreenPosts = ({ route, navigation }) => {
     });
     setPosts(newPosts);
   };
-  // console.log(posts);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -27,37 +29,17 @@ const DefaultScreenPosts = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.user}>
+        <Text>{nickname}</Text>
+        <Image
+          source={{ uri: photoURL }}
+          style={{ height: 40, width: 40, borderRadius: 20 }}
+        />
+      </View>
       <FlatList
         data={posts}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View
-            style={{
-              marginBottom: 10,
-              justifyContent: "center",
-            }}
-          >
-            <Image source={{ uri: item.photo }} style={{ height: 200 }} />
-            <View>
-              <Text>{item.comment}</Text>
-            </View>
-            <Button
-              title="Go to map"
-              onPress={() =>
-                navigation.navigate("Map", { location: item.location })
-              }
-            />
-            <Button
-              title="Go to comments"
-              onPress={() =>
-                navigation.navigate("Comments", {
-                  postId: item.id,
-                  uri: item.photo,
-                })
-              }
-            />
-          </View>
-        )}
+        renderItem={({ item }) => <Posts post={item} navigation={navigation} />}
       />
     </View>
   );
@@ -69,6 +51,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 10,
     backgroundColor: "#fff",
+  },
+  user: {
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 10,
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
 });
 

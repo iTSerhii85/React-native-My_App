@@ -23,8 +23,7 @@ const initialState = {
   email: "",
   password: "",
   nickname: "",
-
-  photo: "",
+  photoURL: "",
 };
 
 const RegistrationScreen = ({ navigation }) => {
@@ -48,7 +47,6 @@ const RegistrationScreen = ({ navigation }) => {
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           requestPermission();
-          // console.log("Storage permission granted");
         }
       } catch (err) {
         console.warn(err);
@@ -65,14 +63,22 @@ const RegistrationScreen = ({ navigation }) => {
     });
 
     if (!result.canceled) {
+      setInputValue((prevState) => ({
+        ...prevState,
+        photoURL: result.assets[0].uri,
+      }));
+
       setImage(result.assets[0].uri);
     }
   };
 
   const handleSubmit = () => {
-    setIsShowKeyboard(false);
-    Keyboard.dismiss();
     dispatch(authSignUpUser(inputValue));
+    setIsShowKeyboard(false);
+
+    // console.log("inputValue", inputValue);
+
+    Keyboard.dismiss();
     setInputValue(initialState);
   };
 
@@ -86,12 +92,6 @@ const RegistrationScreen = ({ navigation }) => {
       requestStoragePermission();
     } else {
       pickImage();
-      if (image) {
-        setInputValue((prevState) => ({
-          ...prevState,
-          photo: image,
-        }));
-      }
     }
   };
 

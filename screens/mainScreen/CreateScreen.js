@@ -27,27 +27,29 @@ const CreateScreen = ({ navigation }) => {
   const [location, setLocation] = useState(null);
   const [newPhoto, setNewPhoto] = useState(false);
   const [type, setType] = useState(CameraType.back);
-  const { userId, nickname } = useSelector((state) => state.auth);
+  const { userId, nickname, photoURL } = useSelector((state) => state.auth);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [status, requestPermissionStatus] = Location.useForegroundPermissions();
+
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
 
   const navigate = async () => {
     navigation.navigate("DefaultScreen");
     setPhoto(null);
     setNewPhoto(false);
-    // console.log("comment", comment);
   };
 
-  const uploadPostToServer = async (photoURL) => {
+  const uploadPostToServer = async (photo) => {
     try {
       const docRef = await addDoc(collection(db, "posts"), {
         userId,
         nickname,
-        photo: photoURL,
+        photo,
         comment,
         location: location.coords,
+        photoURL,
       });
-      // console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
@@ -60,9 +62,7 @@ const CreateScreen = ({ navigation }) => {
 
     const storageRef = ref(storage, `postImages/${uniquePostId}.jpg`);
 
-    await uploadBytes(storageRef, file).then((snapshot) => {
-      // console.log("Uploaded a blob or file!");
-    });
+    await uploadBytes(storageRef, file).then((snapshot) => {});
 
     await getDownloadURL(ref(storage, `postImages/${uniquePostId}.jpg`))
       .then((url) => {
@@ -76,7 +76,9 @@ const CreateScreen = ({ navigation }) => {
     setPhoto(picture.uri);
     const location = await Location.getCurrentPositionAsync();
     setLocation(location);
-    // console.log("location", location);
+    const [geocode] = await Location.reverseGeocodeAsync(location.coords);
+    setCity(geocode.city);
+    setCountry(geocode.country);
   };
 
   function toggleCameraType() {
@@ -166,10 +168,16 @@ const CreateScreen = ({ navigation }) => {
           </TouchableOpacity>
 
           <View style={styles.inputContainer}>
-            <TextInput style={styles.input} onChangeText={setComment} />
+            <TextInput
+              style={styles.input}
+              onChangeText={setComment}
+              placeholder="Описание"
+            />
           </View>
-          <View style={styles.inputContainer}>
-            <TextInput style={styles.input} />
+          <View style={styles.textContainer}>
+            <Ionicons name="location-sharp" size={24} color="#FF6C00" />
+            <Text>{country},</Text>
+            <Text>{city}</Text>
           </View>
           <TouchableOpacity style={styles.download} onPress={sendPhoto}>
             <Text style={styles.titleBtn}>Опубликовать</Text>
@@ -277,8 +285,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginHorizontal: 10,
   },
+  textContainer: {
+    marginTop: 10,
+    marginHorizontal: 10,
+    flexDirection: "row",
+    gap: 5,
+  },
   input: {
-    height: 50,
+    height: 35,
     borderColor: "#ffffff",
     borderBottomColor: "#FF6C00",
     borderWidth: 1,

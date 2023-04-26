@@ -17,7 +17,7 @@ const db = getFirestore(app);
 const ProfileScreen = () => {
   const [userPosts, setUserPosts] = useState([]);
   const dispatch = useDispatch();
-  const { userId } = useSelector((state) => state.auth);
+  const { userId, photoURL, nickname } = useSelector((state) => state.auth);
 
   const getUserPosts = async () => {
     const q = query(collection(db, "posts"), where("userId", "==", userId));
@@ -47,6 +47,13 @@ const ProfileScreen = () => {
   return (
     <View style={styles.container}>
       <Button title="signOut" onPress={signOut} />
+      <View style={styles.user}>
+        <Image
+          source={{ uri: photoURL }}
+          style={{ height: 60, width: 60, borderRadius: 30 }}
+        />
+        <Text>{nickname}</Text>
+      </View>
       <FlatList
         data={userPosts}
         keyExtractor={(item, index) => index.toString()}
@@ -79,6 +86,13 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     gap: 10,
+  },
+  user: {
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 10,
+    justifyContent: "flex-start",
+    alignItems: "center",
   },
 });
 
