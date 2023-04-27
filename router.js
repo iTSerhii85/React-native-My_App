@@ -71,6 +71,7 @@ export const useRoute = (isAuth) => {
           tabBarIcon: ({ focused, color, size }) => (
             <Feather name="user" size={size} color={color} />
           ),
+          headerShown: false,
         }}
         name="Profile"
         component={ProfileScreen}

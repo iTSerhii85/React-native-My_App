@@ -1,7 +1,10 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { authSignUpUser } from "../../redux/auth/authOperations";
+import { AntDesign } from "@expo/vector-icons";
+import { PermissionsAndroid, Platform } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import {
   StyleSheet,
   Text,
@@ -12,12 +15,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
-  Image,
 } from "react-native";
-
-import { AntDesign } from "@expo/vector-icons";
-import { PermissionsAndroid, Platform } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 
 const initialState = {
   email: "",
@@ -27,13 +25,20 @@ const initialState = {
 };
 
 const RegistrationScreen = ({ navigation }) => {
-  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-  const [inputValue, setInputValue] = useState(initialState);
   const [permission, requestPermission] =
     ImagePicker.useMediaLibraryPermissions();
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [inputValue, setInputValue] = useState(initialState);
   const [image, setImage] = useState(null);
-
   const dispatch = useDispatch();
+
+  const addPhoto = async () => {
+    if (!permission.granted) {
+      requestStoragePermission();
+    } else {
+      pickImage();
+    }
+  };
 
   const requestStoragePermission = async () => {
     if (Platform.OS === "android") {
@@ -73,26 +78,15 @@ const RegistrationScreen = ({ navigation }) => {
   };
 
   const handleSubmit = () => {
-    dispatch(authSignUpUser(inputValue));
     setIsShowKeyboard(false);
-
-    // console.log("inputValue", inputValue);
-
-    Keyboard.dismiss();
+    dispatch(authSignUpUser(inputValue));
     setInputValue(initialState);
+    Keyboard.dismiss();
   };
 
   const backdropKeyboardHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-  };
-
-  const addPhoto = async () => {
-    if (!permission.granted) {
-      requestStoragePermission();
-    } else {
-      pickImage();
-    }
   };
 
   return (
@@ -137,7 +131,6 @@ const RegistrationScreen = ({ navigation }) => {
             <View
               style={{
                 ...styles.form,
-                // width: dimensions,
                 paddingHorizontal: 16,
                 paddingBottom: isShowKeyboard ? 20 : 50,
               }}
@@ -209,9 +202,7 @@ const RegistrationScreen = ({ navigation }) => {
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => navigation.navigate("Login")}
-                style={{
-                  ...styles.logBtn,
-                }}
+                style={styles.logBtn}
               >
                 <Text style={styles.logBtnTitle}>Уже есть аккаунт? Войти</Text>
               </TouchableOpacity>
@@ -301,9 +292,6 @@ const styles = StyleSheet.create({
   photoBtn: {
     width: "100%",
     height: "100%",
-    // position: "absolute",
-    // bottom: 0,
-    // right: 0,
   },
 });
 

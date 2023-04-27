@@ -1,8 +1,7 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { authSignInUser } from "../../redux/auth/authOperations";
-// import { useFonts } from "expo-font";
 import {
   StyleSheet,
   Text,
@@ -13,7 +12,6 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
-  Dimensions,
 } from "react-native";
 
 const initialState = {
@@ -24,19 +22,7 @@ const initialState = {
 const LoginScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [inputValue, setInputValue] = useState(initialState);
-  // const [dimensions, setDimensions] = useState(Dimensions.get("window").width);
   const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   const onChange = () => {
-  //     const width = Dimensions.get("window").width;
-  //     setDimensions(width);
-  //   };
-  //   Dimensions.addEventListener("change", onChange);
-  //   return () => {
-  //     Dimensions.removeEventListener("change", onChange);
-  //   };
-  // }, []);
 
   const handleSubmit = () => {
     setIsShowKeyboard(false);
@@ -61,7 +47,6 @@ const LoginScreen = ({ navigation }) => {
             <View
               style={{
                 ...styles.form,
-                // width: dimensions,
                 paddingHorizontal: 16,
                 paddingBottom: isShowKeyboard ? 20 : 50,
               }}
@@ -107,20 +92,14 @@ const LoginScreen = ({ navigation }) => {
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={handleSubmit}
-                style={{
-                  ...styles.btn,
-                  // marginHorizontal: dimensions > 500 ? 40 : 0,
-                }}
+                style={styles.btn}
               >
                 <Text style={styles.titleBtn}>Войти</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => navigation.navigate("Registration")}
-                style={{
-                  ...styles.logBtn,
-                  // marginHorizontal: dimensions > 500 ? 40 : 0,
-                }}
+                style={styles.logBtn}
               >
                 <Text style={styles.logBtnTitle}>
                   Нет аккаунта? Зарегистрироваться
@@ -143,10 +122,8 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
     justifyContent: "flex-end",
-    // alignItems: "center",
   },
   form: {
-    // width: "100%",
     backgroundColor: "#ffffff",
     paddingTop: 20,
     borderTopLeftRadius: 20,

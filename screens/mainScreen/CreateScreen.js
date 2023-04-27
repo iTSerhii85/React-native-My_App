@@ -42,13 +42,15 @@ const CreateScreen = ({ navigation }) => {
 
   const uploadPostToServer = async (photo) => {
     try {
-      const docRef = await addDoc(collection(db, "posts"), {
+      await addDoc(collection(db, "posts"), {
         userId,
         nickname,
         photo,
         comment,
         location: location.coords,
         photoURL,
+        city,
+        country,
       });
     } catch (e) {
       console.error("Error adding document: ", e);
@@ -204,7 +206,6 @@ const styles = StyleSheet.create({
   camera: {
     flex: 1,
     resizeMode: "cover",
-    // height: "60%",
     justifyContent: "flex-end",
     alignItems: "center",
     padding: 7,

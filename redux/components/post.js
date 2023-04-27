@@ -7,32 +7,13 @@ import {
   Text,
 } from "react-native";
 import * as Location from "expo-location";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
 export const Posts = ({ post, navigation }) => {
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
-
-  useEffect(() => {
-    if (post.location) {
-      (async () => {
-        const [geocode] = await Location.reverseGeocodeAsync(post.location);
-        setCity(geocode.city);
-        setCountry(geocode.country);
-      })();
-    }
-  }, []);
-
   return (
-    <View
-      style={{
-        marginBottom: 10,
-        justifyContent: "center",
-        borderBottomColor: "#D9EBE9",
-        borderBottomWidth: 1,
-      }}
-    >
+    <View style={styles.postContainer}>
       <Image
         source={{ uri: post.photo }}
         style={{ height: 200, borderRadius: 10, marginBottom: 5 }}
@@ -54,8 +35,8 @@ export const Posts = ({ post, navigation }) => {
         onPress={() => navigation.navigate("Map", { location: post.location })}
       >
         <Ionicons name="location-sharp" size={24} color="#FF6C00" />
-        <Text>{country},</Text>
-        <Text>{city}</Text>
+        <Text>{post.country},</Text>
+        <Text>{post.city}</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.textContainer}
@@ -78,6 +59,12 @@ export const Posts = ({ post, navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  postContainer: {
+    marginBottom: 10,
+    justifyContent: "center",
+    borderBottomColor: "#D9EBE9",
+    borderBottomWidth: 1,
+  },
   userPost: {
     flexDirection: "row",
     gap: 5,

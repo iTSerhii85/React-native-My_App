@@ -15,25 +15,23 @@ const authSignUpUser =
   ({ email, password, nickname, photoURL }) =>
   async (dispatch, getState) => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password).then(
-        (userCredential) => {
-          const user = userCredential.user;
-          dispatch(authSlice.actions.updateUserProfile({ userId: user.uid }));
-        }
-      );
+      await createUserWithEmailAndPassword(auth, email, password);
 
       await updateProfile(auth.currentUser, {
         displayName: nickname,
         photoURL: photoURL,
-      }).then(() => {
-        const user = auth.currentUser;
-        dispatch(
-          authSlice.actions.updateUserProfile({
-            nickname: user.displayName,
-            photoURL: user.photoURL,
-          })
-        );
-      });
+      })
+        .then(() => {
+          const user = auth.currentUser;
+          dispatch(
+            authSlice.actions.updateUserProfile({
+              userId: user.uid,
+              nickname: user.displayName,
+              photoURL: user.photoURL,
+            })
+          );
+        })
+        .then(authSignInUser(email, password));
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;

@@ -1,7 +1,7 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   TouchableOpacity,
   SafeAreaView,
@@ -26,10 +26,6 @@ const CommentsScreen = ({ route }) => {
   const postId = route.params.postId;
   const uri = route.params.uri;
 
-  // useEffect(() => {
-  //   getAllPosts();
-  // }, []);
-
   useFocusEffect(
     React.useCallback(() => {
       getAllPosts();
@@ -43,7 +39,6 @@ const CommentsScreen = ({ route }) => {
         nickname,
         photoURL,
       }).then(getAllPosts());
-      // console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
