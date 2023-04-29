@@ -5,12 +5,10 @@ import LoginScreen from "./screens/auth/LoginScreen";
 import PostsScreen from "./screens/mainScreen/PostsScreen";
 import CreateScreen from "./screens/mainScreen/CreateScreen";
 import ProfileScreen from "./screens/mainScreen/ProfileScreen";
-
 import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { authSignOutUser } from "./redux/auth/authOperations";
-
 import { useDispatch } from "react-redux";
 
 const MainStack = createStackNavigator();
@@ -42,7 +40,9 @@ export const useRoute = (isAuth) => {
           tabBarIcon: ({ focused, color, size }) => (
             <Feather name="grid" size={size} color={color} />
           ),
+          tabBarActiveTintColor: "#FF6C00",
           title: "Публикации",
+          headerShown: false,
           headerRight: () => (
             <Entypo
               onPress={() => dispatch(authSignOutUser())}
@@ -62,6 +62,7 @@ export const useRoute = (isAuth) => {
             <AntDesign name="pluscircle" size={size} color={color} />
           ),
           title: "Создать публикацию",
+          tabBarActiveTintColor: "#FF6C00",
         }}
         name="Create"
         component={CreateScreen}
@@ -71,6 +72,7 @@ export const useRoute = (isAuth) => {
           tabBarIcon: ({ focused, color, size }) => (
             <Feather name="user" size={size} color={color} />
           ),
+          tabBarActiveTintColor: "#FF6C00",
           headerShown: false,
         }}
         name="Profile"

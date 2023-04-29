@@ -1,15 +1,10 @@
+import { View, StyleSheet, TouchableOpacity, Image, Text } from "react-native";
 import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  Button,
-  Text,
-} from "react-native";
-import * as Location from "expo-location";
-import React, { useEffect, useState } from "react";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useFocusEffect } from "@react-navigation/native";
+  Ionicons,
+  MaterialCommunityIcons,
+  FontAwesome,
+} from "@expo/vector-icons";
+import React from "react";
 
 export const Posts = ({ post, navigation }) => {
   return (
@@ -37,6 +32,7 @@ export const Posts = ({ post, navigation }) => {
         <Ionicons name="location-sharp" size={24} color="#FF6C00" />
         <Text>{post.country},</Text>
         <Text>{post.city}</Text>
+        <FontAwesome name="hand-o-left" size={20} color="#BDBDBD" />
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.textContainer}
@@ -53,6 +49,7 @@ export const Posts = ({ post, navigation }) => {
           color="#FF6C00"
         />
         <Text>Комментарии</Text>
+        <FontAwesome name="hand-o-left" size={20} color="#BDBDBD" />
       </TouchableOpacity>
     </View>
   );

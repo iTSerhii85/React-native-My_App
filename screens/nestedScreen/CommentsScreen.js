@@ -1,7 +1,9 @@
+import { getFirestore, addDoc, collection, getDocs } from "firebase/firestore";
 import { useFocusEffect } from "@react-navigation/native";
-import { useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
 import React, { useState } from "react";
+import app from "../../firebase/config";
 import {
   TouchableOpacity,
   SafeAreaView,
@@ -14,8 +16,6 @@ import {
   View,
 } from "react-native";
 
-import { getFirestore, addDoc, collection, getDocs } from "firebase/firestore";
-import app from "../../firebase/config";
 const db = getFirestore(app);
 
 const CommentsScreen = ({ route }) => {
@@ -34,7 +34,7 @@ const CommentsScreen = ({ route }) => {
 
   const createPost = async () => {
     try {
-      const docRef = await addDoc(collection(db, "posts", postId, "comments"), {
+      await addDoc(collection(db, "posts", postId, "comments"), {
         comment,
         nickname,
         photoURL,
@@ -89,7 +89,6 @@ const CommentsScreen = ({ route }) => {
         />
         <TouchableOpacity style={styles.download} onPress={createPost}>
           <Ionicons name="arrow-up" size={18} color="#ffffff" />
-          {/* <Text style={styles.titleBtn}>+</Text> */}
         </TouchableOpacity>
       </View>
     </View>

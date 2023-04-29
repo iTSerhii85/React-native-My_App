@@ -1,14 +1,14 @@
 import { authSignOutUser } from "../../redux/auth/authOperations";
+import { UserPosts } from "../../redux/components/userPosts";
 import { useFocusEffect } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import React, { useEffect, useState } from "react";
 import { Entypo } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import app from "../../firebase/config";
 import {
   View,
   StyleSheet,
   Text,
-  Button,
   FlatList,
   Image,
   ImageBackground,
@@ -22,12 +22,11 @@ import {
   getDocs,
 } from "firebase/firestore";
 
-import app from "../../firebase/config";
 const db = getFirestore(app);
 
 const ProfileScreen = () => {
-  const [userPosts, setUserPosts] = useState([]);
   const dispatch = useDispatch();
+  const [userPosts, setUserPosts] = useState([]);
   const { userId, photoURL, nickname } = useSelector((state) => state.auth);
 
   const getUserPosts = async () => {
@@ -35,15 +34,11 @@ const ProfileScreen = () => {
     const querySnapshot = await getDocs(q);
     const userPost = [];
     querySnapshot.forEach((doc) => {
-      userPost.push({ ...doc.data() });
+      userPost.push({ ...doc.data(), id: doc.id });
     });
     setUserPosts(userPost);
+    console.log(userPosts);
   };
-  // console.log(userPosts);
-
-  // useEffect(() => {
-  //   getUserPosts();
-  // }, []);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -71,40 +66,12 @@ const ProfileScreen = () => {
           </TouchableOpacity>
           <View style={styles.user}>
             <Image source={{ uri: photoURL }} style={styles.userPhoto} />
-            <Text style={{ fontSize: 30, fontWeight: 500, lineHeight: 35 }}>
-              {nickname}
-            </Text>
+            <Text style={styles.textNicName}>{nickname}</Text>
           </View>
           <FlatList
             data={userPosts}
             keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <View
-                style={{
-                  marginBottom: 10,
-                  // justifyContent: "center",
-                }}
-              >
-                <Image
-                  source={{ uri: item.photo }}
-                  style={{ height: 200, borderRadius: 10, marginBottom: 5 }}
-                />
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 500,
-                    lineHeight: 19,
-                    marginLeft: 10,
-                  }}
-                >
-                  {item.comment}
-                </Text>
-                <View style={styles.textContainer}>
-                  <Ionicons name="location-sharp" size={24} color="#FF6C00" />
-                  <Text>{item.country}</Text>
-                </View>
-              </View>
-            )}
+            renderItem={({ item }) => <UserPosts item={item} />}
           />
         </View>
       </ImageBackground>
@@ -126,7 +93,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    height: "80%",
+    height: "82%",
   },
   image: {
     flex: 1,
@@ -149,19 +116,11 @@ const styles = StyleSheet.create({
   },
   user: {
     gap: 10,
-    marginBottom: 10,
+    marginBottom: 5,
     justifyContent: "flex-start",
     alignItems: "center",
   },
-  textContainer: {
-    marginTop: 5,
-    marginBottom: 5,
-    marginHorizontal: 10,
-    flexDirection: "row",
-    gap: 5,
-    marginRight: 10,
-    marginLeft: "auto",
-  },
+  textNicName: { fontSize: 30, fontWeight: 500, lineHeight: 35, margin: 0 },
 });
 
 export default ProfileScreen;

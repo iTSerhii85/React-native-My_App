@@ -1,11 +1,19 @@
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useState } from "react";
 import { collection, getDocs, getFirestore } from "firebase/firestore";
-import { View, StyleSheet, FlatList, Image, Button, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Image,
+  Text,
+  TouchableOpacity,
+} from "react-native";
+import { Entypo } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import { Posts } from "../../redux/components/post";
-
 import app from "../../firebase/config";
+
 const db = getFirestore(app);
 
 const DefaultScreenPosts = ({ route, navigation }) => {
@@ -27,14 +35,25 @@ const DefaultScreenPosts = ({ route, navigation }) => {
     }, [route])
   );
 
+  const signOut = () => {
+    dispatch(authSignOutUser());
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.user}>
-        <Text>{nickname}</Text>
         <Image
           source={{ uri: photoURL }}
-          style={{ height: 40, width: 40, borderRadius: 20 }}
+          style={{ height: 60, width: 60, borderRadius: 16 }}
         />
+        <Text>{nickname}</Text>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={signOut}
+          style={{ marginLeft: "auto", marginRight: 0 }}
+        >
+          <Entypo name="log-out" size={28} color="#BDBDBD" />
+        </TouchableOpacity>
       </View>
       <FlatList
         data={posts}
@@ -51,12 +70,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 10,
     backgroundColor: "#fff",
+    paddingTop: 30,
   },
   user: {
     flexDirection: "row",
     gap: 10,
     marginBottom: 10,
-    justifyContent: "flex-end",
+    paddingHorizontal: 10,
     alignItems: "center",
   },
 });
