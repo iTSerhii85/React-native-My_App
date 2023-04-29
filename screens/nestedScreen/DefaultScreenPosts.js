@@ -1,6 +1,10 @@
-import { useFocusEffect } from "@react-navigation/native";
-import React, { useState } from "react";
 import { collection, getDocs, getFirestore } from "firebase/firestore";
+import { useFocusEffect } from "@react-navigation/native";
+import { Posts } from "../../redux/components/post";
+import { Entypo } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
+import React, { useState } from "react";
+import app from "../../firebase/config";
 import {
   View,
   StyleSheet,
@@ -9,10 +13,6 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
-import { Entypo } from "@expo/vector-icons";
-import { useSelector } from "react-redux";
-import { Posts } from "../../redux/components/post";
-import app from "../../firebase/config";
 
 const db = getFirestore(app);
 

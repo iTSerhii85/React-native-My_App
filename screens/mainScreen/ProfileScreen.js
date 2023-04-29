@@ -37,7 +37,6 @@ const ProfileScreen = () => {
       userPost.push({ ...doc.data(), id: doc.id });
     });
     setUserPosts(userPost);
-    console.log(userPosts);
   };
 
   useFocusEffect(

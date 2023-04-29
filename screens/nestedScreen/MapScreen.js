@@ -1,5 +1,5 @@
-import { StyleSheet, View, Text } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import { StyleSheet, View } from "react-native";
 
 const MapScreen = ({ route }) => {
   const location = route.params.location;
